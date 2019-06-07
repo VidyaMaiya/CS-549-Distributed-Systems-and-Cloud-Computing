@@ -1,0 +1,25 @@
+2019-06-07 11:12:46,313 [Worker-3] INFO  c.g.t.t.d.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
+2019-06-07 11:13:21,573 [Worker-12] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: edu.stevens.cs549:ftpinterface:0.0.3-SNAPSHOT @ C:\Stevens\Courses\CS-549-Distributed Systems and Cloud Computing\Assignments\Assignment1\Assignment1-Code\Assignment1-Code\ftp\ftpinterface\pom.xml.
+2019-06-07 11:13:21,838 [Worker-12] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: edu.stevens.cs549:ftpserver:0.0.3-SNAPSHOT @ C:\Stevens\Courses\CS-549-Distributed Systems and Cloud Computing\Assignments\Assignment1\Assignment1-Code\Assignment1-Code\ftp\ftpserver\pom.xml.
+2019-06-07 11:13:21,963 [Worker-12] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: edu.stevens.cs549:ftpclient:0.0.3-SNAPSHOT @ C:\Stevens\Courses\CS-549-Distributed Systems and Cloud Computing\Assignments\Assignment1\Assignment1-Code\Assignment1-Code\ftp\ftpclient\pom.xml.
+2019-06-07 11:13:23,588 [Worker-12] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /ftpinterface/src/main/java
+2019-06-07 11:13:23,588 [Worker-12] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /ftpinterface/src/test/java
+2019-06-07 11:13:23,666 [Worker-12] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /ftpclient/src/main/java
+2019-06-07 11:13:23,666 [Worker-12] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /ftpclient/src/main/resources
+2019-06-07 11:13:23,666 [Worker-12] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /ftpclient/src/test/java
+2019-06-07 11:13:23,728 [Worker-12] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /ftpserver/src/main/java
+2019-06-07 11:13:23,728 [Worker-12] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /ftpserver/src/main/resources
+2019-06-07 11:13:23,728 [Worker-12] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /ftpserver/src/test/java
+2019-06-07 11:13:23,791 [Worker-12] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Imported and configured 3 project(s) in 5 sec
+2019-06-07 11:13:24,775 [Worker-3] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2019-06-07 11:13:24,775 [Worker-3] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory C:\Stevens\Courses\CS-549-Distributed Systems and Cloud Computing\Assignments\Assignment1\Assignment1-Code\Assignment1-Code\ftp\ftpinterface\src\main\resources
+2019-06-07 11:13:24,775 [Worker-3] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2019-06-07 11:13:24,775 [Worker-3] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory C:\Stevens\Courses\CS-549-Distributed Systems and Cloud Computing\Assignments\Assignment1\Assignment1-Code\Assignment1-Code\ftp\ftpinterface\src\test\resources
+2019-06-07 11:13:25,009 [Worker-3] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2019-06-07 11:13:25,025 [Worker-3] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 5 resources
+2019-06-07 11:13:25,087 [Worker-3] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2019-06-07 11:13:25,087 [Worker-3] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory C:\Stevens\Courses\CS-549-Distributed Systems and Cloud Computing\Assignments\Assignment1\Assignment1-Code\Assignment1-Code\ftp\ftpclient\src\test\resources
+2019-06-07 11:13:25,259 [Worker-3] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2019-06-07 11:13:25,259 [Worker-3] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 5 resources
+2019-06-07 11:13:25,275 [Worker-3] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2019-06-07 11:13:25,275 [Worker-3] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory C:\Stevens\Courses\CS-549-Distributed Systems and Cloud Computing\Assignments\Assignment1\Assignment1-Code\Assignment1-Code\ftp\ftpserver\src\test\resources
