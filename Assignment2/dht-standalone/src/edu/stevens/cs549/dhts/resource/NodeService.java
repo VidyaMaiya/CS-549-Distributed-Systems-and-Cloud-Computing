@@ -75,7 +75,7 @@ public class NodeService {
 	private Response response(TableRow r) {
 		return Response.ok(tableRowRep(r)).header(Time.TIME_STAMP, Time.advanceTime()).build();
 	}
-
+	
 	private Response responseNull() {
 		return Response.notModified().header(Time.TIME_STAMP, Time.advanceTime()).build();
 	}
@@ -95,7 +95,7 @@ public class NodeService {
 		info("getPred()");
 		return response(dht.getPred());
 	}
-
+	
 	public Response notify(TableRep predDb) {
 		advanceTime();
 		info("notify()");
@@ -112,7 +112,7 @@ public class NodeService {
 	public static JAXBElement<TableRow> tableRowRep(TableRow tr) {
 		return new JAXBElement<TableRow>(nsTableRow, TableRow.class, tr);
 	}
-
+	
 	public Response findSuccessor(int id) {
 		try {
 			advanceTime();
@@ -123,4 +123,36 @@ public class NodeService {
 		}
 	}
 	
+	public Response getSucc() {
+		advanceTime();
+		info("getSucc()");
+		return response(dht.getSucc());
+	}
+	
+	public Response getClosestPrecedingFinger(int id) {
+			advanceTime();
+			info("getClosestPrecedingFinger()");
+			return response(dht.closestPrecedingFinger(id));
+		
+	}
+	
+	public Response getKeyValue(String key) throws Invalid {
+		advanceTime();
+		info("getKeyValue()");
+		return response(new TableRow(key,dht.get(key)));
+	}
+	
+	public Response addKeyValue(String key, String value) throws Exception {
+		advanceTime();
+		info("addKeyValue()");
+		dht.add(key, value);
+		return response();
+	}
+	
+	public Response deleteKeyValue(String key,String value) throws Exception  {
+		advanceTime();
+		info("deleteKeyValue()");
+		dht.delete(key, value);
+		return response();
+	}
 }

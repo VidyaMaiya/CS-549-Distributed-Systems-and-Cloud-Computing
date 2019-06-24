@@ -11,7 +11,7 @@ import edu.stevens.cs549.dhts.resource.TableRep;
  * This should ONLY be accessed locally by the DHT Web service.
  * Think of it as a database server for a DHT node.
  */
-public interface IState {
+public interface IState { //Internal state of DHT node
 
 	/*
 	 * The key for a node.
@@ -21,7 +21,7 @@ public interface IState {
 	/*
 	 * Get all values stored under a key.
 	 */
-	public String[] get(String k);
+	public String[] get(String k); //for accessing internal hash table stored in the node
 
 	/*
 	 * Add a binding under a key (always cumulative).

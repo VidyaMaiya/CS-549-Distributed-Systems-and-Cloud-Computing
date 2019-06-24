@@ -14,6 +14,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import edu.stevens.cs549.dhts.activity.DHTBase.Invalid;
+
 @Path("/dht")
 public class NodeResource {
 
@@ -73,6 +75,41 @@ public class NodeResource {
 	public Response findSuccessor(@QueryParam("id") String index) {
 		int id = Integer.parseInt(index);
 		return new NodeService(headers, uriInfo).findSuccessor(id);
+	}
+	
+	@GET
+	@Path("succ")
+	@Produces("application/xml")
+	public Response getSucc() {
+		return new NodeService(headers, uriInfo).getSucc();
+	}
+	
+	@GET
+	@Path("finger")
+	@Produces("application/xml")
+	public Response getClosestPrecedingFinger(@QueryParam("id") String index) {
+		int id = Integer.parseInt(index);
+		return new NodeService(headers, uriInfo).getClosestPrecedingFinger(id);
+	}
+	
+	@GET
+	@Produces("application/xml")
+	public Response getKeyValue(@QueryParam("key") String key) throws Invalid {
+		return new NodeService(headers,uriInfo).getKeyValue(key);
+	}
+	
+	@PUT
+	@Consumes("application/xml")
+	@Produces("application/xml")
+	public Response addKeyValue(@QueryParam("key") String key, @QueryParam("val") String value) throws Exception {
+		return new NodeService(headers,uriInfo).addKeyValue(key,value);
+	}
+	
+	@DELETE
+	@Consumes("application/xml")
+	@Produces("application/xml")
+	public Response deleteKeyValue(@QueryParam("key") String key, @QueryParam("val") String value) throws Exception {
+		return new NodeService(headers,uriInfo).deleteKeyValue(key,value);
 	}
 
 }

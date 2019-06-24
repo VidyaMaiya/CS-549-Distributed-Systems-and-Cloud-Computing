@@ -9,7 +9,7 @@ import edu.stevens.cs549.dhts.activity.NodeInfo;
  * ONLY to be invoked by the local business logic of the DHT node.
  */
 
-public interface IRouting extends Remote {
+public interface IRouting extends Remote { //internal state for routing
 
 	public static final boolean USE_FINGER_TABLE = false;
 	

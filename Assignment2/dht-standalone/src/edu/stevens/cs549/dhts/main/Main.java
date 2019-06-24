@@ -134,17 +134,17 @@ public class Main {
 			httpPort = Integer.parseInt((String) props.getProperty("server.port.http", "8080"));
 			host = (String) props.getProperty("server.host", "localhost");
 
-			nodeId = new Random().nextInt(IRouting.NKEYS);
+			nodeId = new Random().nextInt(IRouting.NKEYS); //nodeId = 0-63
 
 			/*
 			 * Properties may be overridden by command line options.
 			 */
 
-			processArgs(args);
+			processArgs(args); //initializes values for host, port,nodeId variables
 
-			BASE_URI = getBaseURI();
+			BASE_URI = getBaseURI(); //http URL string : http://host:port
 
-			INFO = new NodeInfo(nodeId, getURI(BASE_URI));
+			INFO = new NodeInfo(nodeId, getURI(BASE_URI)); //returns NodeInfo object -> [ 23, http://localhost:8080 ]
 
 		} catch (java.io.FileNotFoundException e) {
 			severe("Server error: " + serverPropsFile + " file not found.");
@@ -194,7 +194,7 @@ public class Main {
 
 	protected State startStateServer() throws IOException {
 		info("Starting state server...");
-		State stub = new State(INFO);
+		State stub = new State(INFO); //INFO=node info. Stub contains finger table initialization from keybits finger[0] to finger[63]
 		stateServer = stub;
 		routingServer = stub;
 		info("State server bound.");
@@ -217,32 +217,32 @@ public class Main {
 	}
 
 	public static void main(String[] args) throws IOException {
-		Main main = new Main(args);
+		Main main = new Main(args); //creates NodeInfo object -> [ 23, http://localhost:8080 ]
 
 		/*
 		 * Start the state server for this node.
 		 */
-		main.startStateServer();
+		main.startStateServer(); //initializes finger table from 0 -63
 		/*
 		 * Start the HTTP server (for Web services) and background thread for
 		 * stabilize.
 		 */
-		CliClient client = new CliClient(INFO, stateServer(), routingServer(), main);
+		CliClient client = new CliClient(INFO, stateServer(), routingServer(), main); //creates DHT object, WebClient and assigns Main class object
 		HttpServer httpServer = main.startHttpServer();
-		Thread t = new Thread(new Background(5000, 8, main, client.getDHT()));
+		Thread t = new Thread(new Background(5000, 8, main, client.getDHT())); //does stabilize for every 5 sec
 		t.start();
 		/*
 		 * Start the command-line loop.
 		 */
 		main.info(String.format("DHT Web service started with WADL available at "
 				+ "%s/application.wadl\nTry out %s\nEntering command-line interface...", BASE_URI, INFO.addr.toString()));
-		client.cli();
+		client.cli(); //start command line interface. Terminates when you type quit command
 
 		/*
 		 * Execute when the CLI terminates.
 		 */
 		main.info("Terminating background processing...");
-		main.setTerminated();
+		main.setTerminated(); //stop background thread
 		main.info("Shutting down Web server...");
 		httpServer.shutdownNow();
 

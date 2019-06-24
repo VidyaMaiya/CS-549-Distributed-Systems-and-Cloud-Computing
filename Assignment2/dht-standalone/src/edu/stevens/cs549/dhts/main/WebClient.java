@@ -34,7 +34,7 @@ public class WebClient {
 	/*
 	 * Creation of client instances is expensive, so just create one.
 	 */
-	protected Client client;
+	protected Client client; //Jersey client
 	
 	public WebClient() {
 		client = ClientBuilder.newClient();
@@ -60,11 +60,36 @@ public class WebClient {
 
 	private Response putRequest(URI uri, Entity<?> entity) {
 		// TODO
+		try {
+			Response pr = client.target(uri)
+					.request(MediaType.APPLICATION_XML_TYPE)
+					.header(Time.TIME_STAMP, Time.advanceTime())
+					.put(entity);
+			processResponseTimestamp(pr);
+			return pr;
+		}catch(Exception e) {
+			error("Exception during PUT request: "+e);
+			return null;
+		}
 		
 	}
-	
+		
 	private Response putRequest(URI uri) {
 		return putRequest(uri, Entity.text(""));
+	}
+	
+	private Response deleteRequest(URI uri) {
+		try {
+			Response cr = client.target(uri)
+					.request(MediaType.APPLICATION_XML_TYPE)
+					.header(Time.TIME_STAMP, Time.advanceTime())
+					.delete();
+			processResponseTimestamp(cr);
+			return cr;
+		} catch(Exception e) {
+			error("Exception during DELETE request: "+e);
+			return null;
+		}
 	}
 
 	private void processResponseTimestamp(Response cr) {
@@ -76,6 +101,9 @@ public class WebClient {
 	 * information.
 	 */
 	private GenericType<JAXBElement<NodeInfo>> nodeInfoType = new GenericType<JAXBElement<NodeInfo>>() {
+	};
+	
+	private GenericType<JAXBElement<TableRow>> tableRowType = new GenericType<JAXBElement<TableRow>>() {
 	};
 
 	/*
@@ -101,7 +129,97 @@ public class WebClient {
 			return pred;
 		}
 	}
-
+	
+	/*
+	 * Get the successor pointer at a node
+	 */
+	public NodeInfo getSucc(NodeInfo node) throws DHTBase.Failed {
+		URI succPath = UriBuilder.fromUri(node.addr).path("succ").build();
+		info("client getSucc(" +succPath+ ")");
+		Response response = getRequest(succPath);
+		if(response == null || response.getStatus() >=300) {
+			throw new DHTBase.Failed("GET /succ");
+		} else {
+			NodeInfo succ = response.readEntity(nodeInfoType).getValue();
+			return succ;
+		}
+	}
+	
+	/*
+	 * Search the network for the successor of ID.
+	 */
+	public NodeInfo findSuccessor(URI addr, int id) throws DHTBase.Failed {
+		UriBuilder ub = UriBuilder.fromUri(addr).path("find");
+		URI succPath = ub.queryParam("id", id).build();
+		info("client findSuccessor(" + succPath +")");
+		Response response = getRequest(succPath);
+		if(response == null || response.getStatus() >=300) {
+			throw new DHTBase.Failed("Get /find?id=ID");
+		} else {
+			NodeInfo succNode = response.readEntity(nodeInfoType).getValue();
+			return succNode;
+		}
+	}
+	
+	/*
+	 * Find closest preceding finger of ID
+	 */
+	public NodeInfo closestPrecedingFinger(NodeInfo node,int id) throws DHTBase.Failed  {
+		UriBuilder ub = UriBuilder.fromUri(node.addr).path("finger");
+		URI closestPrecedingFingerPath = ub.queryParam("id", id).build();
+		info("client closestPrecedingFinger("+ closestPrecedingFingerPath +")");
+		Response response = getRequest(closestPrecedingFingerPath);
+		if(response == null || response.getStatus() >=300) {
+			throw new DHTBase.Failed("Get /finger?id=ID");
+		}else {
+			NodeInfo closestPrecedingFinger = response.readEntity(nodeInfoType).getValue();
+			return closestPrecedingFinger;
+		}
+		
+	}
+	
+	/*
+	 * Get List of values for the key
+	 */
+	public String[] get(NodeInfo node, String key) throws DHTBase.Failed {
+		UriBuilder ub = UriBuilder.fromUri(node.addr);
+		URI getKeyValuePath = ub.queryParam("key", key).build();
+		info("client getKeyValuePath("+getKeyValuePath+")");
+		Response response = getRequest(getKeyValuePath);
+		if(response == null || response.getStatus()>=300) {
+			throw new DHTBase.Failed("Get ?key=KEY");
+		} else {
+			TableRow tr = response.readEntity(tableRowType).getValue();
+			return tr.vals;
+		}
+	}
+	
+	/*
+	 * Add a key and a value
+	 */
+	public void add(NodeInfo node, String key, String value) throws DHTBase.Failed {
+		UriBuilder ub = UriBuilder.fromUri(node.addr);
+		URI addKeyValuePath = ub.queryParam("key", key).queryParam("val", value).build();
+		info("client addKeyValuePath("+addKeyValuePath+")");
+		Response response = putRequest(addKeyValuePath);
+		if(response == null || response.getStatus() >=300) {
+			throw new DHTBase.Failed("PUT ?key=KEY&val=VAL");
+			} 
+		}
+	
+	/*
+	 * Delete a key and a value
+	 */
+	public void delete(NodeInfo node, String key, String value) throws DHTBase.Failed {
+		UriBuilder ub = UriBuilder.fromUri(node.addr);
+		URI deleteKeyPath = ub.queryParam("key", key).queryParam("val", value).build();
+		info("client deleteKeyPath("+deleteKeyPath+")");
+		Response response = deleteRequest(deleteKeyPath);
+		if(response == null || response.getStatus() >=300) {
+			throw new DHTBase.Failed("DELETE ?key=KEY&val=VAL");
+			} 
+	}
+	
 	/*
 	 * Notify node that we (think we) are its predecessor.
 	 */

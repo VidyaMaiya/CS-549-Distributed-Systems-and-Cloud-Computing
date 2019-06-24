@@ -31,9 +31,9 @@ public class State implements IState, IRouting {
 		this.predecessor = null;
 		this.successor = info;
 
-		this.finger = new NodeInfo[NKEYS];
+		this.finger = new NodeInfo[NKEYS]; //NodeInfo is activity class. NKEYS=64
 		for (int i = 0; i < NKEYS; i++) {
-			finger[i] = info;
+			finger[i] = info; //finger[0] = [23,http://localhost:8080] ... finger[63] = [23,http://localhost:8080]
 		}
 
 	}
@@ -171,14 +171,14 @@ public class State implements IState, IRouting {
 		/*
 		 * TODO: Set the ith finger.
 		 */
-		
+		finger[i] = info;
 	}
 
 	public synchronized NodeInfo getFinger(int i) {
 		/*
 		 * TODO: Get the ith finger.
 		 */
-		
+		return finger[i];
 	}
 
 	public synchronized NodeInfo closestPrecedingFinger(int id) {

@@ -114,6 +114,7 @@ public class DHT extends DHTBase implements IDHTResource, IDHTNode, IDHTBackgrou
 			return getSucc();
 		} else {
 			// TODO: Do the Web service call
+			return client.getSucc(info);
 
 		}
 	}
@@ -149,7 +150,7 @@ public class DHT extends DHTBase implements IDHTResource, IDHTNode, IDHTBackgrou
 			/*
 			 * TODO: Do the Web service call
 			 */
-			
+			return client.getPred(info);
 		}
 	}
 
@@ -469,7 +470,8 @@ public class DHT extends DHTBase implements IDHTResource, IDHTNode, IDHTBackgrou
 			 * 
 			 * TODO: Do the Web service call.
 			 */
-			
+			return client.get(n,k);
+		
 		}
 	}
 
@@ -496,6 +498,7 @@ public class DHT extends DHTBase implements IDHTResource, IDHTNode, IDHTBackgrou
 			/*
 			 * TODO: Do the Web service call.
 			 */
+			client.add(n,k,v);
 			
 		}
 	}
@@ -549,7 +552,7 @@ public class DHT extends DHTBase implements IDHTResource, IDHTNode, IDHTBackgrou
 			/*
 			 * TODO: Do the Web service call.
 			 */
-			
+			 client.delete(n, k, v);
 		}
 	}
 
@@ -586,7 +589,7 @@ public class DHT extends DHTBase implements IDHTResource, IDHTNode, IDHTBackgrou
 		int id = NodeKey(skey);
 		// if the key's id is equal to the nodes id then get it locally
 		if (info.id == id)
-			return get(info, skey);
+			return get(info, skey); //fetch skey's value from internal state hashtable
 		else {
 			NodeInfo succ = this.findSuccessor(id);
 			return get(succ, skey);
@@ -634,7 +637,17 @@ public class DHT extends DHTBase implements IDHTResource, IDHTNode, IDHTBackgrou
 		 * that it keeps its own bindings, to which it adds those it transfers
 		 * from us.
 		 */
-
+		
+			URI nodeAddress = null;
+			try {
+				nodeAddress = new URI(uri);
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			succ = findSuccessor(nodeAddress,info.id);
+		    setSucc(succ);
+		    stabilize();
 	
 	}
 
