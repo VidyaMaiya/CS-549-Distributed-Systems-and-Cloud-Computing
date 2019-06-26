@@ -186,6 +186,13 @@ public class State implements IState, IRouting {
 		 * TODO: Get closest preceding finger for id, to continue search at that
 		 * node. Hint: See DHTBase.inInterval()
 		 */
+		for(int i=NKEYS-1;i>=0;i--) {
+			if(DHTBase.inInterval(finger[i].id, info.id, id)) {
+				return finger[i];
+			} 
+		}
+		return info;
+		
 
 	}
 

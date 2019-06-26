@@ -144,7 +144,7 @@ public class Main {
 
 			BASE_URI = getBaseURI(); //http URL string : http://host:port
 
-			INFO = new NodeInfo(nodeId, getURI(BASE_URI)); //returns NodeInfo object -> [ 23, http://localhost:8080 ]
+			INFO = new NodeInfo(nodeId, getURI(BASE_URI)); //returns NodeInfo object -> [ 23, http://localhost:8080/dht ]
 
 		} catch (java.io.FileNotFoundException e) {
 			severe("Server error: " + serverPropsFile + " file not found.");

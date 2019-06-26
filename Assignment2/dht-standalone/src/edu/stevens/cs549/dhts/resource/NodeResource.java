@@ -99,8 +99,8 @@ public class NodeResource {
 	}
 	
 	@PUT
-	@Consumes("application/xml")
-	@Produces("application/xml")
+	/*@Consumes("application/xml")
+	@Produces("application/xml")*/
 	public Response addKeyValue(@QueryParam("key") String key, @QueryParam("val") String value) throws Exception {
 		return new NodeService(headers,uriInfo).addKeyValue(key,value);
 	}

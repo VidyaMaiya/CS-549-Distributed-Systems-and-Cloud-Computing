@@ -183,6 +183,7 @@ public class DHT extends DHTBase implements IDHTResource, IDHTNode, IDHTBackgrou
 				/*
 				 * TODO: Do the Web service call to the remote node.
 				 */
+				return client.closestPrecedingFinger(info,id);
 				
 			} else {
 				/*
