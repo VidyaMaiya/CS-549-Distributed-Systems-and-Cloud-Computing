@@ -142,14 +142,14 @@ public class NodeService {
 		return response(new TableRow(key,dht.get(key)));
 	}
 	
-	public Response addKeyValue(String key, String value) throws Exception {
+	public Response addKeyValue(String key, String value) throws Invalid {
 		advanceTime();
 		info("addKeyValue()");
 		dht.add(key, value);
 		return response();
 	}
 	
-	public Response deleteKeyValue(String key,String value) throws Exception  {
+	public Response deleteKeyValue(String key,String value) throws Invalid  {
 		advanceTime();
 		info("deleteKeyValue()");
 		dht.delete(key, value);

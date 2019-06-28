@@ -99,16 +99,14 @@ public class NodeResource {
 	}
 	
 	@PUT
-	/*@Consumes("application/xml")
-	@Produces("application/xml")*/
-	public Response addKeyValue(@QueryParam("key") String key, @QueryParam("val") String value) throws Exception {
+	/*@Consumes("application/xml")*/
+	@Produces("application/xml")
+	public Response addKeyValue(@QueryParam("key") String key, @QueryParam("val") String value) throws Invalid {
 		return new NodeService(headers,uriInfo).addKeyValue(key,value);
 	}
 	
 	@DELETE
-	@Consumes("application/xml")
-	@Produces("application/xml")
-	public Response deleteKeyValue(@QueryParam("key") String key, @QueryParam("val") String value) throws Exception {
+	public Response deleteKeyValue(@QueryParam("key") String key, @QueryParam("val") String value) throws Invalid {
 		return new NodeService(headers,uriInfo).deleteKeyValue(key,value);
 	}
 
