@@ -1,9 +1,11 @@
 package edu.stevens.cs549.dhts.state;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.EventSource;
+import org.glassfish.jersey.media.sse.SseBroadcaster;
 
 import edu.stevens.cs549.dhts.activity.NodeInfo;
 import edu.stevens.cs549.dhts.resource.TableRep;
@@ -112,4 +114,6 @@ public interface IState {
 	
 	public void listCallbacks();
 
+	public Map<String,SseBroadcaster> getListeners();
+	public Map<Integer,Map<String,EventOutput>> getOutputs();
 }

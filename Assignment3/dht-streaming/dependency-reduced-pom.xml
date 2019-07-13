@@ -128,7 +128,7 @@
     <server.port.http>8080</server.port.http>
     <server.testdir>${server.home}/tmp/cs549/dht-test</server.testdir>
     <server.name>dht</server.name>
-    <server.external-dns>localhost</server.external-dns>
+    <server.external-dns>ec2-54-146-234-2.compute-1.amazonaws.com</server.external-dns>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <server.dist>${server.testdir}</server.dist>
     <server.home>${user.home}</server.home>

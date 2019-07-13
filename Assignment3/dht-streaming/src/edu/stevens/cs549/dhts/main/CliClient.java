@@ -11,12 +11,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.glassfish.jersey.media.sse.EventListener;
 import org.glassfish.jersey.media.sse.InboundEvent;
 
 import edu.stevens.cs549.dhts.activity.DHT;
+import edu.stevens.cs549.dhts.activity.DHTBase.Failed;
 import edu.stevens.cs549.dhts.activity.IDHTBackground;
 import edu.stevens.cs549.dhts.activity.IDHTNode;
 import edu.stevens.cs549.dhts.activity.NodeInfo;
@@ -30,18 +32,16 @@ import edu.stevens.cs549.dhts.state.Persist;
 
 public class CliClient {
 
-	public static Logger log = Logger
-			.getLogger("edu.stevens.cs549.dht.main.Client");
-	
+	public static Logger log = Logger.getLogger("edu.stevens.cs549.dht.main.Client");
 
 	protected IDHTNode node;
-	
+
 	protected WebClient client;
-	
+
 	protected Main main;
-	
+
 	protected long key;
-	
+
 	public CliClient(NodeInfo info, IState s, IRouting r, Main m) {
 		node = new DHT(info, s, r);
 		client = new WebClient();
@@ -50,7 +50,8 @@ public class CliClient {
 	}
 
 	protected void msg(String m) {
-		System.out.print(m);;
+		System.out.print(m);
+		;
 	}
 
 	protected void msgln(String m) {
@@ -62,9 +63,9 @@ public class CliClient {
 		main.severe("Error : " + e);
 		e.printStackTrace();
 	}
-	
+
 	public IDHTBackground getDHT() {
-		return (IDHTBackground)node;
+		return (IDHTBackground) node;
 	}
 
 	public void cli() {
@@ -124,23 +125,39 @@ public class CliClient {
 		}
 
 	}
-	
+
 	protected EventListener listener(final String key) {
 		return new EventListener() {
-	        @Override
-	        public void onEvent(InboundEvent ev) {
-	        	System.out.println("Inside listener: "+ev.readData(String.class));
-	            msgln(String.format("** Binding event (%s): %s -> %s", ev.getName(), key, ev.readData(String.class)));
-	        }
-	    };
+			@Override
+			public void onEvent(InboundEvent ev) {
+				if (ev.getId().equals("-1")) {
+					System.out.println("Inside listener: " + ev.readData(Integer.class));
+					msgln(String.format("** Binding event (%s): Binding for the key %s is moved out of Node %d", ev.getName(), key,
+							ev.readData(Integer.class)));
+					try {
+						TimeUnit.SECONDS.sleep(5);
+						node.listenOn(key, listener(key));
+					} catch (Failed | InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else if (ev.getId().equals("1")) {
+					System.out.println("Inside listener: " + ev.readData(String.class));
+					msgln(String.format("** Binding event (%s): %s -> %s", ev.getName(), key,
+							ev.readData(String.class)));
+				}
+
+			}
+
+		};
 	}
 
 	protected class Dispatch {
 
 		protected WebClient client;
 		protected IDHTNode node;
-		
-		protected 
+
+		protected
 
 		Dispatch(WebClient c, IDHTNode n) {
 			client = c;
@@ -167,45 +184,45 @@ public class CliClient {
 				msgln("  listenOn key: request notification of a change in binding for this key");
 				msgln("  listenOff key: disable any further notifications for this key");
 				msgln("  listeners: keys for which listeners are defined");
-				
+
 				msgln("  quit: exit the client");
 			}
 		}
 
-//		public void localGet(String[] inputs) {
-//			if (inputs.length == 2)
-//				try {
-//					String[] vs = node.get(inputs[1]);
-//					if (vs != null)
-//						msgln(Persist.displayVals(vs));
-//				} catch (Exception e) {
-//					err(e);
-//				}
-//			else
-//				msgln("Usage: lget <key>");
-//		}
-//
-//		public void localAdd(String[] inputs) {
-//			if (inputs.length == 3)
-//				try {
-//					node.add(inputs[1], inputs[2]);
-//				} catch (Exception e) {
-//					err(e);
-//				}
-//			else
-//				msgln("Usage: ladd <key> <value>");
-//		}
-//
-//		public void localDelete(String[] inputs) {
-//			if (inputs.length == 3)
-//				try {
-//					node.delete(inputs[1], inputs[2]);
-//				} catch (Exception e) {
-//					err(e);
-//				}
-//			else
-//				msgln("Usage: ldel <key> <value>");
-//		}
+		// public void localGet(String[] inputs) {
+		// if (inputs.length == 2)
+		// try {
+		// String[] vs = node.get(inputs[1]);
+		// if (vs != null)
+		// msgln(Persist.displayVals(vs));
+		// } catch (Exception e) {
+		// err(e);
+		// }
+		// else
+		// msgln("Usage: lget <key>");
+		// }
+		//
+		// public void localAdd(String[] inputs) {
+		// if (inputs.length == 3)
+		// try {
+		// node.add(inputs[1], inputs[2]);
+		// } catch (Exception e) {
+		// err(e);
+		// }
+		// else
+		// msgln("Usage: ladd <key> <value>");
+		// }
+		//
+		// public void localDelete(String[] inputs) {
+		// if (inputs.length == 3)
+		// try {
+		// node.delete(inputs[1], inputs[2]);
+		// } catch (Exception e) {
+		// err(e);
+		// }
+		// else
+		// msgln("Usage: ldel <key> <value>");
+		// }
 
 		public void get(String[] inputs) {
 			if (inputs.length == 2)
@@ -289,7 +306,7 @@ public class CliClient {
 		public void weblog(String[] inputs) {
 			if (inputs.length == 1)
 				try {
-//					client.toggleLogging();
+					// client.toggleLogging();
 					Log.setLogging();
 				} catch (Exception e) {
 					err(e);
@@ -307,7 +324,7 @@ public class CliClient {
 						msgln("Server up.");
 					}
 				} catch (URISyntaxException e) {
-					msgln("Badly formed URI: "+inputs[1]);
+					msgln("Badly formed URI: " + inputs[1]);
 				} catch (Exception e) {
 					err(e);
 				}
@@ -325,7 +342,7 @@ public class CliClient {
 			else
 				msgln("Usage: insert <uri>");
 		}
-		
+
 		public void listenOn(String[] inputs) {
 			if (inputs.length == 2)
 				try {

@@ -1,14 +1,20 @@
 package edu.stevens.cs549.dhts.activity;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.jersey.media.sse.EventListener;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.EventSource;
+import org.glassfish.jersey.media.sse.OutboundEvent;
+import org.glassfish.jersey.media.sse.SseBroadcaster;
 
 import edu.stevens.cs549.dhts.main.Main;
 import edu.stevens.cs549.dhts.main.WebClient;
@@ -48,7 +54,7 @@ public class DHT extends DHTBase implements IDHTResource, IDHTNode, IDHTBackgrou
 	 */
 
 	protected Logger log = Logger.getLogger(DHT.class.getCanonicalName());
-
+	
 	protected void info(String s) {
 		log.info(s);
 	}
@@ -322,6 +328,46 @@ public class DHT extends DHTBase implements IDHTResource, IDHTNode, IDHTBackgrou
 			return false;
 		}
 	}
+	
+	public void stabilizeListener() {
+		Map<String,SseBroadcaster> listenersMap = state.getListeners();
+		for(Entry<String,SseBroadcaster> entry : listenersMap.entrySet()) {
+			try {
+				if(get(entry.getKey()) == null) {
+					broadcastRemoveListener(entry.getKey(),entry.getValue(),entry);
+				}
+			} catch (Invalid e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void broadcastRemoveListener(String key, SseBroadcaster broadcaster,Entry<String, SseBroadcaster> entry) {
+		OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
+		OutboundEvent event = eventBuilder.name("remove-listener")
+				            .id("-1")
+							.mediaType(MediaType.TEXT_PLAIN_TYPE)
+				            .data(Integer.class,getNodeInfo().id)
+				            .build();
+		broadcaster.broadcast(event);
+		
+		Map<Integer,Map<String,EventOutput>> outputs = state.getOutputs();
+		for(Entry<Integer,Map<String,EventOutput>> outputMaps : outputs.entrySet()) {
+			if(outputMaps.getValue().containsKey(key)) {
+				try {
+					EventOutput eventoutput = outputMaps.getValue().get(key);
+					eventoutput.close();
+					outputMaps.getValue().remove(key);
+					entry.getValue().remove(eventoutput);
+					state.removeCallback(key);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
 	// WebMethod
 	public TableRep notify(TableRep predDb) {
@@ -395,6 +441,7 @@ public class DHT extends DHTBase implements IDHTResource, IDHTNode, IDHTBackgrou
 	protected TableRep transferBindings(int predId) {
 		TableRep db = state.extractBindings(predId);
 		state.dropBindings(predId);
+		stabilizeListener();
 		return db;
 	}
 
@@ -679,7 +726,7 @@ public class DHT extends DHTBase implements IDHTResource, IDHTNode, IDHTBackgrou
 		// TODO remove event output stream from broadcaster
 		state.removeListener(id, key);
 	}
-		
+	
 	/*
 	 * Client-side callbacks
 	 */
@@ -694,10 +741,9 @@ public class DHT extends DHTBase implements IDHTResource, IDHTNode, IDHTBackgrou
 		 * (for both the listen on and listen off requests).
 		 */
 		int id = NodeKey(key);
-		NodeInfo currentNode = findSuccessor(id);
-		//NodeInfo currentNode = getNodeInfo();
-		System.out.println("Key "+key+" is present in the node id "+currentNode.id);
-		EventSource eventSource = client.listenForBindings(currentNode, currentNode.id, key);
+		NodeInfo keyNode = findSuccessor(id);
+		NodeInfo currentNode = getNodeInfo();
+		EventSource eventSource = client.listenForBindings(keyNode, currentNode.id, key);
 		eventSource.register(listener);
 		eventSource.open();
 		state.addCallback(key, eventSource);
@@ -710,8 +756,9 @@ public class DHT extends DHTBase implements IDHTResource, IDHTNode, IDHTBackgrou
 		 * as well as close the event source here at the client.
 		 */
 		int id = NodeKey(key);
-		NodeInfo currentNode = findPredecessor(id);
-		client.listenOff(currentNode, currentNode.id, key);
+		NodeInfo keyNode = findSuccessor(id);
+		NodeInfo currentNode = getNodeInfo();
+		client.listenOff(keyNode, currentNode.id, key);
 		state.removeCallback(key);
 	}
 	

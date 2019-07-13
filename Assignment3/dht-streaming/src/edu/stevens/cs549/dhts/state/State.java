@@ -290,6 +290,8 @@ public class State implements IState, IRouting {
 			} catch(IOException ioClose) {
 				throw new RuntimeException("Error when closing the event output.", ioClose);
 			}
+			outputs.get(id).remove(key);
+			listeners.get(key).remove(eventOutput);
 		}
 	}
 	
@@ -297,23 +299,16 @@ public class State implements IState, IRouting {
 		// TODO broadcast an added binding (use IDHTNode.NEW_BINDING_EVENT for event name).
 		OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
 		event = eventBuilder.name(IDHTNode.NEW_BINDING_EVENT)
+				            .id("1")
 							.mediaType(MediaType.TEXT_PLAIN_TYPE)
 				            .data(String.class,value)
 				            .build();
-		System.out.println("Listeners Key: "+key+" It's value: "+listeners.get(key));
-		System.out.println("Display content of listeners");
-		for(Entry<String,SseBroadcaster> entry : listeners.entrySet()) {
-			System.out.println(entry.getKey()+"-->"+entry.getValue());
-		}
 		if(listeners.get(key) != null) {
-			System.out.println("Going to broadcast for the key "+key+" for the listener "+listeners.get(key));
-			System.out.println(event);
 			listeners.get(key).broadcast(event);
 		}
 	}
 	
 	public void addListener(int id, String key, EventOutput os) {
-		//TODO add the event
 			if(outputs.get(id) != null) {
 				outputs.get(id).put(key,os);
 			}else {
@@ -321,7 +316,6 @@ public class State implements IState, IRouting {
 				outputVal.put(key,os);
 				outputs.put(id, outputVal);
 			} 
-			
 			if(listeners.get(key)!=null) {
 				SseBroadcaster broadcaster = listeners.get(key);
 				broadcaster.add(os);
@@ -330,6 +324,14 @@ public class State implements IState, IRouting {
 				broadcaster.add(os);
 				listeners.put(key, broadcaster);
 			}
+	}
+	
+	public Map<String,SseBroadcaster> getListeners() {
+		return listeners;
+	}
+	
+	public Map<Integer,Map<String,EventOutput>> getOutputs() {
+		return outputs;
 	}
 	
 	/*

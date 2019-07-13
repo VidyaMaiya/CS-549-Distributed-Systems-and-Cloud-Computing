@@ -7,9 +7,8 @@ import edu.stevens.cs549.dhts.resource.NodeResource;
 
 public class Application extends ResourceConfig {
     public Application() {
+    	super(NodeResource.class,SseFeature.class);
         packages("edu.stevens.cs549.dhts.resource");
         // TODO register SseFeature
-        register(SseFeature.class);
-        register(NodeResource.class);
     }
 }
